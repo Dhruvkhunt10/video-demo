@@ -131,7 +131,7 @@ const Home = () => {
       getTags(t);
     };
     init();
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     document.body.style.overflow = drawerOpen ? "hidden" : "auto";
