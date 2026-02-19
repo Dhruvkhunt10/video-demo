@@ -3,6 +3,7 @@ import Login from "./Pages/Login";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Home from "./Pages/Home";
+import Otp from "./Pages/Otp";
 
 function App() {
 
@@ -13,6 +14,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<Home />} />
+          <Route path="/otp" element={<Otp />} />
         </Routes>
       </Router>
     </>

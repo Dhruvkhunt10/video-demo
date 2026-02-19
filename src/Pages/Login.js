@@ -16,6 +16,7 @@ const Login = () => {
 
     const validate = () => {
         let newErrors = {};
+
         if (!phone) {
             newErrors.phone = "Phone number is required";
         } else if (!/^\d+$/.test(phone)) {
@@ -23,48 +24,88 @@ const Login = () => {
         } else if (phone.length < 8) {
             newErrors.phone = "Invalid phone number";
         }
-        if (!password) {
-            newErrors.password = "Password is required";
-        }
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
     const handleSubmit = async () => {
         if (!validate()) return;
-        try {
-            setLoading(true);
-            const payload = {
-                phoneNumberCode: `+${countryCode}`,
-                phoneNumber: phone.slice(countryCode?.length, phone),
-                password: password,
-                referralCode: "",
-                uid: "",
-            };
-            const res = await axios.post(
-                "https://api.klimatenet.io/api/v1/user/login",
-                payload,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-            if (!res?.data?.isError) {
-                localStorage.setItem("user", JSON.stringify(res.data.result));
-                navigate('/')
-                toast.success("Login successful");
-            } else {
-                toast.error(res?.data?.message || "Login failed");
-            }
-        } catch (error) {
-            const apiMessage =
-                error?.response?.data?.responseException?.exceptionMessage ||
-                error?.response?.data?.message;
 
-            toast.error(apiMessage || "Server error. Please try again.");
-        } finally {
-            setLoading(false);
+        const phonePayload = {
+            phoneNumberCode: `+${countryCode}`,
+            phoneNumber: phone.slice(countryCode.length),
+        };
+        if (password) {
+            try {
+                setLoading(true);
+
+                const payload = {
+                    ...phonePayload,
+                    password,
+                    referralCode: "",
+                    uid: "",
+                };
+
+                const res = await axios.post(
+                    "https://api.klimatenet.io/api/v1/user/login",
+                    payload,
+                    { headers: { "Content-Type": "application/json" } }
+                );
+
+                if (!res?.data?.isError) {
+                    localStorage.setItem("user", JSON.stringify(res.data.result));
+                    toast.success("Login successful");
+                    navigate("/");
+                } else {
+                    toast.error(res?.data?.message || "Login failed");
+                }
+            } catch (error) {
+                const apiMessage =
+                    error?.response?.data?.responseException?.exceptionMessage ||
+                    error?.response?.data?.message;
+
+                toast.error(apiMessage || "Server error. Please try again.");
+            } finally {
+                setLoading(false);
+            }
+        }
+        else {
+            try {
+                setLoading(true);
+
+                const payload = {
+                    mobileNumberCode: `+${countryCode}`,
+                    mobileNumber: phone.slice(countryCode.length),
+                    context: "Registration",
+                    subContext: "Send OTP",
+                    placeHolders: {},
+                    referralCode: "",
+                };
+
+                const res = await axios.post(
+                    "https://api.klimatenet.io/api/v1/notification/single/template",
+                    payload,
+                    { headers: { "Content-Type": "application/json" } }
+                );
+
+                if (!res?.data?.isError) {
+                    toast.success("OTP send successfully");
+                    navigate("/otp", {
+                        state: {...phonePayload, referenceId: res?.data?.result?.output},
+                    });
+                } else {
+                    toast.error(res?.data?.message || "Send otp failed");
+                }
+            } catch (error) {
+                const apiMessage =
+                    error?.response?.data?.responseException?.exceptionMessage ||
+                    error?.response?.data?.message;
+
+                toast.error(apiMessage || "Server error. Please try again.");
+            } finally {
+                setLoading(false);
+            }
         }
     };
 
@@ -116,6 +157,9 @@ const Login = () => {
                             color: "#000",
                         }}
                         enableSearch
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") handleSubmit();
+                        }}
                     />
                     {errors.phone && <span style={errorStyle}>{errors.phone}</span>}
                 </div>
@@ -184,12 +228,28 @@ const Login = () => {
                         <span style={errorStyle}>{errors.password}</span>
                     )}
                 </div>
+                <div
+                    style={{
+                        fontSize: "12px",
+                        color: "rgba(255,255,255,0.75)",
+                        marginBottom: "18px",
+                        lineHeight: "1.5",
+                        background: "rgba(255,255,255,0.05)",
+                        padding: "10px 12px",
+                        borderRadius: "8px",
+                        border: "1px solid rgba(255,255,255,0.15)",
+                    }}
+                >
+                    🔐 <strong>Password login:</strong> Enter your password to sign in instantly.
+                    <br />
+                    📲 <strong>OTP login:</strong> Leave password empty and click <b>Login</b> to receive an OTP on your phone.
+                </div>
                 <button
                     style={buttonStyle}
                     onClick={handleSubmit}
                     disabled={loading}
                 >
-                    {loading ? "Logging in..." : "Login"}
+                    {loading ? password ? "Logging in..." : "Sending Otp..." : "Login"}
                 </button>
             </div>
         </div>

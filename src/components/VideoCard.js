@@ -1,12 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 
-const VideoCard = ({ video }) => {
+const VideoCard = ({ video, tags,isFeatured }) => {
   const [showPreview, setShowPreview] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [positionClass, setPositionClass] = useState("expand-center");
   const cardRef = useRef(null);
   const videoRef = useRef(null);
-  const detail = video?.contentDetails?.[0];
 
   const handlePlayFullscreen = (e) => {
     e.stopPropagation();
@@ -55,25 +54,47 @@ const VideoCard = ({ video }) => {
         onMouseLeave={handleMouseLeave}
       >
         {!showPreview && (
-          <img src={video?.contentImage} alt={video?.contentCollName} />
+          <div className="thumbWrapper">
+            <img
+              src={video?.contentLabel}
+              alt={video?.contentTitle}
+              className="thumbImg"
+            />
+            <div className="thumbOverlay" />
+            <div className="thumbBottom">
+              <h4 className="thumbTitle">{video?.contentTitle}</h4>
+
+              <div className="thumbInfo">
+                <span className="thumbBadge">VIDEO</span>
+                <div className="thumbDuration">
+                  {(() => {
+                    const totalSec = video?.contentDuration_sec || 0;
+                    const hours = Math.floor(totalSec / 3600);
+                    const minutes = Math.floor((totalSec % 3600) / 60);
+
+                    if (hours > 0) {
+                      return `${hours}h ${minutes}m`;
+                    }
+                    return `${minutes}m`;
+                  })()}
+                </div>
+
+              </div>
+            </div>
+          </div>
         )}
         {showPreview && (
           <>
             <video
               ref={videoRef}
-              src={detail?.contentUri}
+              src={video?.contentUri}
               autoPlay
-              muted
               loop
               className="previewVideo"
             />
             <div className="hoverContent">
-              <h4>{video?.contentCollName}</h4>
               <div className="hoverActions">
-                <button
-                  className="playBtn"
-                  onClick={handlePlayFullscreen}
-                >
+                <button className="playBtn" onClick={handlePlayFullscreen}>
                   ▶ Play
                 </button>
                 <button
@@ -86,8 +107,10 @@ const VideoCard = ({ video }) => {
                   Details
                 </button>
               </div>
-              <p className="meta">
-                {Math.floor(detail?.contentDuration_sec / 60)} min • Video
+              <p style={{ fontSize: "13px", fontWeight: "600" }}>
+                {tags?.map((item, index) => {
+                  return item + (index != tags?.length - 1 ? " • " : "");
+                })}
               </p>
             </div>
           </>
@@ -99,24 +122,20 @@ const VideoCard = ({ video }) => {
           style={{ pointerEvents: showModal ? "auto" : "none" }}
           onClick={() => setShowModal(false)}
         >
-
-          <div
-            className="modalContent"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="modalContent" onClick={(e) => e.stopPropagation()}>
             <span className="closeBtn" onClick={() => setShowModal(false)}>
               ✕
             </span>
             <video
-              src={detail?.contentUri}
+              src={video?.contentUri}
               controls
               autoPlay
               className="modalVideo"
             />
-            <h2>{video?.contentCollName}</h2>
+            <h2>{video?.contentTitle}</h2>
             <div
               dangerouslySetInnerHTML={{
-                __html: detail?.detailDescription || video?.description,
+                __html: video?.detailDescription,
               }}
             />
           </div>

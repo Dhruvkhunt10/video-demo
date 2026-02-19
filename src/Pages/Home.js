@@ -15,11 +15,13 @@ const parseJwt = (token) => {
 const Home = () => {
   const navigate = useNavigate();
   const [videos, setVideos] = useState([]);
+  const [userPersonlizationvideo, setUserPersonlizationvideo] = useState([]);
   const [tags, setTags] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedTags, setSelectedTags] = useState([]);
   const [token, setToken] = useState(null);
   const [loadingVideos, setLoadingVideos] = useState(false);
+  const [loadingUserPersonlizationVideos, setLoadingUserPersonlizationVideos] = useState(false);
 
   const renewToken = async (loginToken, refreshToken) => {
     try {
@@ -85,6 +87,27 @@ const Home = () => {
     }
   };
 
+  const userPersonlization = async (token) => {
+    try {
+      setLoadingUserPersonlizationVideos(true);
+      const res = await axios.get(
+        "https://api.klimatenet.io/api/v1/user-personalization/UserPersonlization",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setUserPersonlizationvideo(res?.data?.result?.[0])
+    } catch (err) {
+      console.error(err);
+      setVideos([]);
+    } finally {
+      setLoadingUserPersonlizationVideos(false);
+    }
+  };
+
   const getTags = async (token) => {
     try {
       const res = await axios.get(
@@ -129,6 +152,7 @@ const Home = () => {
       setToken(t);
       getVideo(t);
       getTags(t);
+      userPersonlization(t)
     };
     init();
   }, []);
@@ -141,7 +165,16 @@ const Home = () => {
   return (
     <div className="home">
       <Header />
-      <div className="filterBar">
+      <h2 style={{ margin: "20px 0px 0px 20px" }}>Featured</h2>
+      {loadingUserPersonlizationVideos ? (
+        <div className="loader">Loading videos...</div>
+      ) : userPersonlizationvideo?.up_content === 0 ? (
+        <div className="noData">No videos found</div>
+      ) : (
+        <VideoRow isFeatured videos={userPersonlizationvideo?.up_content} />
+      )}
+      <div className="filterBar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h2 style={{ margin: "0px 0px 0px 20px" }}>All Videos</h2>
         <button className="filterBtn" onClick={() => setDrawerOpen(true)}>
           Filter
           {selectedTags.length > 0 && <span className="filterDot" />}
