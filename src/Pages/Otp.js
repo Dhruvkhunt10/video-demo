@@ -52,13 +52,12 @@ const Otp = () => {
                         phoneNumber: phoneNumber,
                         password: "",
                         referralCode: "",
-                        referenceId: referenceId,
                     };
 
                     const res = await axios.post(
                         "https://api.klimatenet.io/api/v1/user/login",
                         payload,
-                        { headers: { "Content-Type": "application/json" } }
+                        { headers: { "Content-Type": "application/json", "x-reference-id": referenceId }, }
                     );
 
                     if (!res?.data?.isError) {
