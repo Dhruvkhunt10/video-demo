@@ -99,7 +99,7 @@ const Home = () => {
           },
         }
       );
-      setUserPersonlizationvideo(res?.data?.result?.[0])
+      setUserPersonlizationvideo(res?.data?.result?.map((item) => item?.up_content)?.flat())
     } catch (err) {
       console.error(err);
       setVideos([]);
@@ -165,13 +165,13 @@ const Home = () => {
   return (
     <div className="home">
       <Header />
-      <h2 style={{ margin: "20px 0px 0px 20px" }}>Featured</h2>
+      <h2 style={{ margin: "20px 0px 0px 20px" }}>Featured Videos</h2>
       {loadingUserPersonlizationVideos ? (
         <div className="loader">Loading videos...</div>
       ) : userPersonlizationvideo?.up_content === 0 ? (
         <div className="noData">No videos found</div>
       ) : (
-        <VideoRow isFeatured videos={userPersonlizationvideo?.up_content} />
+        <VideoRow isFeatured videos={userPersonlizationvideo} />
       )}
       <div className="filterBar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2 style={{ margin: "0px 0px 0px 20px" }}>All Videos</h2>
