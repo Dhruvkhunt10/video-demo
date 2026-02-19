@@ -2,8 +2,6 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css";
 
 const Otp = () => {
     const location = useLocation();
@@ -57,7 +55,12 @@ const Otp = () => {
                     const res = await axios.post(
                         "https://api.klimatenet.io/api/v1/user/login",
                         payload,
-                        { headers: { "Content-Type": "application/json", "x-reference-id": referenceId }, }
+                        {
+                            headers: {
+                                "Content-Type": "application/json", "x-reference-id": referenceId, 'x-timezone': new Date().getTimezoneOffset(),
+                                'x-app-version': "9.0.0"
+                            },
+                        }
                     );
 
                     if (!res?.data?.isError) {
@@ -167,8 +170,8 @@ const Otp = () => {
                         fontSize: "13px",
                         color: "rgba(255,255,255,0.8)",
                         textAlign: "end",
-                        marginBottom:'18px',
-                        marginTop:'2px',
+                        marginBottom: '18px',
+                        marginTop: '2px',
                     }}
                 >
                     Didn’t receive the OTP?{" "}
