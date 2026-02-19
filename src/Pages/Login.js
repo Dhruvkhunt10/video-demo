@@ -78,14 +78,14 @@ const Login = () => {
       }
     `;
         document.head.appendChild(style);
-    }, [navigate]);
+    }, []);
 
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem("user"));
         if (user?.token) {
             navigate('/')
         }
-    }, [navigate])
+    }, [])
 
     return (
         <div style={containerStyle}>
