@@ -1,0 +1,407 @@
+body {
+  margin: 0;
+  background: #141414;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8));
+  color: white;
+}
+.left {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+.logo {
+  font-size: 26px;
+  font-weight: bold;
+  color: #cde800;
+  cursor: pointer;
+}
+.right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.profile {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+.profile img {
+  width: 34px;
+  height: 34px;
+  border-radius: 4px;
+}
+.caret {
+  font-size: 10px;
+}
+.dropdown {
+  position: absolute;
+  right: 0;
+  top: 45px;
+  width: 220px;
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 10px 0;
+  border-radius: 4px;
+}
+.dropdownUser {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 15px;
+}
+.dropdownUser img {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+}
+.dropdownItem {
+  padding: 10px 15px;
+  font-size: 14px;
+  cursor: pointer;
+  color: #e5e5e5;
+}
+.dropdownItem:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+.logout {
+  color: white;
+}
+.divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 8px 0;
+}
+.row {
+  margin: 20px;
+}
+.videoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 15px;
+}
+.videoCard {
+  position: relative;
+  width: 100%;
+  height: 240px;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #000;
+
+  transition:
+    transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.35s ease,
+    z-index 0.35s;
+  will-change: transform;
+}
+.videoCard.expanded {
+  transform: scale(1.4) translateY(-10px);
+  z-index: 20;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+}
+.videoCard.expand-left {
+  transform-origin: left center;
+}
+.videoCard.expand-right {
+  transform-origin: right center;
+}
+.videoCard.expand-center {
+  transform-origin: center center;
+}
+.videoCard img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hoverContent {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 15px;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.95),
+    rgba(0, 0, 0, 0.4),
+    transparent
+  );
+  transform: translateY(20px);
+  opacity: 0;
+  transition: all 0.35s ease;
+}
+.videoCard.expanded .hoverContent {
+  transform: translateY(0);
+  opacity: 1;
+}
+.hoverActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0;
+}
+.playBtn {
+  background: white;
+  color: black;
+  padding: 6px 16px;
+  border-radius: 4px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s;
+}
+.playBtn:hover {
+  background: white;
+  color: black;
+  padding: 6px 16px;
+  border-radius: 4px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transform: scale(1.05);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+}
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  backdrop-filter: blur(0px);
+  transition:
+    background 0.35s ease,
+    backdrop-filter 0.35s ease;
+}
+.modalOverlay.show {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(6px);
+}
+.modalContent {
+  background: #111;
+  width: 70%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 20px;
+  border-radius: 10px;
+  position: relative;
+
+  transform: scale(0.85) translateY(40px);
+  opacity: 0;
+  transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.modalOverlay.show .modalContent {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
+.modalContent::-webkit-scrollbar {
+  display: none;
+}
+.modalVideo {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+.closeBtn {
+  position: absolute;
+  right: 25px;
+  top: 28px;
+  font-size: 16px;
+  cursor: pointer;
+  background: #000;
+  height: 35px;
+  width: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-right: 1px;
+  z-index: 10;
+}
+.closeBtnDrawer {
+  font-size: 22px;
+  cursor: pointer;
+}
+.previewVideo {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  top: 0;
+  left: 0;
+
+  opacity: 0;
+  transform: scale(1.05);
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
+}
+
+.videoCard.expanded .previewVideo {
+  opacity: 1;
+  transform: scale(1);
+}
+.detailsBtn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 6px 16px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s;
+}
+.detailsBtn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 6px 16px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transform: scale(1.05);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+}
+.filterBar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 20px 20px 0 0px;
+}
+.filterBtn {
+  background: #cde800;
+  border: none;
+  color: black;
+  padding: 8px 18px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.drawerOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.3s;
+  z-index: 999;
+  overflow: hidden;
+}
+.drawerOverlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+.drawer {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 450px;
+  height: 100%;
+  background: #111;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+.drawerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 20px;
+}
+.tagList {
+  margin-top: 20px;
+  margin-bottom: 80px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  overflow: auto;
+  scrollbar-width: none;
+}
+.tagList::-webkit-scrollbar {
+  display: none;
+}
+.tagItem {
+  padding: 6px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.tagItem.selected {
+  border: 1px solid #cde800;
+  color: #cde800;
+}
+.drawerFooter {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+.clearBtn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: white;
+  padding: 8px 18px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.applyBtn {
+  background: #cde800;
+  border: none;
+  color: black;
+  padding: 8px 18px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.loader {
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+  color: #fff;
+}
+.noData {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 20px;
+  color: #aaa;
+}
+.filterBtn {
+  position: relative;
+}
+.filterDot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  background: red;
+  border-radius: 50%;
+}

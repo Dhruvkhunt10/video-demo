@@ -1,0 +1,22 @@
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Login from "./Pages/Login";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Home from "./Pages/Home";
+
+function App() {
+
+  return (
+    <>
+      <ToastContainer position="top-right" autoClose={3000} />
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Home />} />
+        </Routes>
+      </Router>
+    </>
+  );
+}
+
+export default App;
