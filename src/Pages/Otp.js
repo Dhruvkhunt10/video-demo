@@ -225,7 +225,7 @@ const containerStyle = {
     width: "100%",
     overflow: "hidden",
     background:
-        "linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('/images/loginBg.avif')",
+        "linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('/images/loginBgthree.png')",
     backgroundSize: "cover",
     backgroundPosition: "center",
     backgroundRepeat: "no-repeat",
